@@ -25,14 +25,20 @@ export default function LoginPage() {
       const telefono = limitPhoneDigits(input);
       const looksLikePhone = telefono.length >= 7;
 
-      // 🔍 BUSCAR USUARIO (SIN PASSWORD)
-      let query = supabase.from("users").select("*").limit(1);
+      // 🔍 BUSCAR USUARIO (ARREGLADO)
+      let query = supabase.from("users").select("*");
 
-      query = looksLikePhone
-        ? query.or(`telefono.ilike.%${telefono},correo.eq.${input},nombre.eq.${input}`)
-        : query.or(`correo.eq.${input},nombre.eq.${input}`);
+      if (looksLikePhone) {
+        query = query.or(
+          `telefono.ilike.%${telefono}%,email.ilike.%${input}%,nombre.ilike.%${input}%`
+        );
+      } else {
+        query = query.or(
+          `email.ilike.%${input}%,nombre.ilike.%${input}%`
+        );
+      }
 
-      const { data, error: queryError } = await query.maybeSingle<UserRow>();
+      const { data, error: queryError } = await query.limit(1).maybeSingle();
 
       // ❌ Usuario no existe
       if (queryError || !data) {
