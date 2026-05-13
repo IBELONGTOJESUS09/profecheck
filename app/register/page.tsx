@@ -10,7 +10,7 @@ export default function RegisterPage() {
   const router = useRouter();
 
   const [nombre, setNombre] = useState("");
-  const [correo, setCorreo] = useState("");
+  const [email, setEmail] = useState("");
   const [prefijo, setPrefijo] = useState("+52");
   const [telefono, setTelefono] = useState("");
   const [password, setPassword] = useState("");
@@ -27,18 +27,18 @@ export default function RegisterPage() {
     }
 
     const tel = limitPhoneDigits(telefono);
-    const cleanCorreo = correo ? normalizeInput(correo) : null;
+    const cleanEmail = email ? normalizeInput(email) : null;
     const fullPhone = tel ? `${prefijo}${tel}` : null;
 
     let existing: any = null;
     let queryError: any = null;
 
-    // 🔍 validar por correo
-    if (cleanCorreo) {
+    // 🔍 validar por email
+    if (cleanEmail) {
       const res = await supabase
         .from("users")
         .select("*")
-        .eq("correo", cleanCorreo)
+        .eq("email", cleanEmail)
         .maybeSingle();
 
       if (res.error) queryError = res.error;
@@ -68,11 +68,11 @@ export default function RegisterPage() {
       return;
     }
 
-    // ✅ insertar usuario
+    // ✅ insertar usuario (CORREGIDO)
     const { error: insertError } = await supabase.from("users").insert([
       {
         nombre: nombre.trim(),
-        correo: cleanCorreo,
+        email: cleanEmail,
         telefono: fullPhone,
         password
       }
@@ -80,7 +80,7 @@ export default function RegisterPage() {
 
     if (insertError) {
       console.log("ERROR INSERTANDO:", JSON.stringify(insertError, null, 2));
-      setError(JSON.stringify(insertError));
+      setError("Error al crear usuario");
       return;
     }
 
@@ -94,16 +94,30 @@ export default function RegisterPage() {
 
         <label className="block text-sm font-medium">
           Nombre
-          <input className="input" value={nombre} onChange={(e) => setNombre(e.target.value)} required />
+          <input
+            className="input"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
         </label>
 
         <label className="block text-sm font-medium">
           Correo electronico
-          <input className="input" type="email" value={correo} onChange={(e) => setCorreo(e.target.value)} />
+          <input
+            className="input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
         </label>
 
         <div className="grid grid-cols-3 gap-2">
-          <input className="input" value={prefijo} onChange={(e) => setPrefijo(e.target.value)} />
+          <input
+            className="input"
+            value={prefijo}
+            onChange={(e) => setPrefijo(e.target.value)}
+          />
           <input
             className="input col-span-2"
             value={telefono}
@@ -115,12 +129,24 @@ export default function RegisterPage() {
 
         <label className="block text-sm font-medium">
           Contraseña
-          <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input
+            className="input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
         </label>
 
         <label className="block text-sm font-medium">
           Confirmar contraseña
-          <input className="input" type="password" value={confirmar} onChange={(e) => setConfirmar(e.target.value)} required />
+          <input
+            className="input"
+            type="password"
+            value={confirmar}
+            onChange={(e) => setConfirmar(e.target.value)}
+            required
+          />
         </label>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
