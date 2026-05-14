@@ -6,7 +6,7 @@ body {
   @apply min-h-screen bg-brand-900;
 }
 
-/* Fondo CECyTE: capas con misma imagen, movimiento diagonal suave (arriba-izquierda) */
+/* Fondo CECyTE: tres capas en mosaico, teselas compactas, deriva diagonal como antes */
 @keyframes cecyte-drift-up-left {
   0% {
     transform: translate3d(3%, 3%, 0);
@@ -45,12 +45,11 @@ body {
   background-image: url("/cecyte-bg.png");
   background-repeat: repeat;
   background-position: center top;
-  /* Mosaico: prioriza la marca superior y reduce la franja del pie del logo */
-  background-size: min(420px, 38vw) auto;
-  opacity: 0.14;
+  background-size: min(150px, 16vw) auto;
+  opacity: 0.24;
   will-change: transform;
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
   -webkit-mask-size: 100% 100%;
   mask-size: 100% 100%;
   animation: cecyte-drift-up-left 48s ease-in-out infinite alternate;
@@ -58,8 +57,8 @@ body {
 
 .cecyte-bg-layer--2 {
   z-index: 2;
-  opacity: 0.1;
-  background-size: min(520px, 48vw) auto;
+  opacity: 0.17;
+  background-size: min(190px, 20vw) auto;
   animation: cecyte-drift-up-left-slow 64s ease-in-out infinite alternate;
   animation-delay: -8s;
   filter: blur(0.5px);
@@ -67,8 +66,8 @@ body {
 
 .cecyte-bg-layer--3 {
   z-index: 1;
-  opacity: 0.07;
-  background-size: min(300px, 28vw) auto;
+  opacity: 0.13;
+  background-size: min(115px, 12vw) auto;
   animation: cecyte-drift-up-left 36s ease-in-out infinite alternate;
   animation-delay: -18s;
 }
@@ -77,20 +76,120 @@ body {
   .cecyte-bg-layer {
     animation: none;
   }
+
+  .card:hover,
+  .btn-primary:hover,
+  .btn-secondary:hover,
+  .input:hover,
+  main button:hover,
+  main tbody tr:hover {
+    transform: none;
+    box-shadow: none;
+    filter: none;
+  }
 }
 
 .card {
   @apply w-full max-w-md rounded-2xl border border-brand-700/60 bg-white p-6 text-slate-800 shadow-xl;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
 }
 
 .input {
-  @apply mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 outline-none ring-brand-500 transition focus:ring-2;
+  @apply mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 outline-none ring-brand-500 focus:ring-2;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .btn-primary {
   @apply rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .btn-secondary {
   @apply rounded-xl border border-slate-300 px-4 py-2 font-semibold text-slate-700 hover:bg-slate-50;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+main button:not(:disabled) {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    filter 0.2s ease,
+    background-color 0.2s ease;
+}
+
+main tbody tr {
+  transition:
+    background-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 22px 40px -16px rgb(30 10 18 / 0.35),
+      0 0 0 1px rgb(125 37 64 / 0.12);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 28px -10px rgb(62 15 32 / 0.55);
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -12px rgb(0 0 0 / 0.18);
+  }
+
+  .input:hover:not(:disabled):not(:focus-visible) {
+    transform: translateY(-2px);
+    border-color: rgb(148 163 184);
+    box-shadow: 0 8px 20px -12px rgb(30 41 59 / 0.2);
+  }
+
+  /* Botones del dashboard y otras pantallas dentro de <main> */
+  main button:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px -10px rgb(0 0 0 / 0.28);
+    filter: brightness(1.04);
+  }
+
+  main tbody tr:hover {
+    background-color: rgb(248 250 252);
+    transform: scale(1.005);
+  }
+
+  /* Enlaces dentro de formularios (login, registro, etc.) */
+  main form a[href] {
+    display: inline-block;
+    transition:
+      transform 0.18s ease,
+      color 0.18s ease;
+  }
+
+  main form a[href]:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+main button:not(:disabled):active {
+  transform: translateY(0);
+  filter: brightness(0.98);
 }
