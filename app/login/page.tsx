@@ -56,7 +56,7 @@ export default function LoginPage() {
 
       // ✅ LOGIN CORRECTO
       saveSession(data.id);
-      router.push("/dashboard");
+      router.push("/group-select");
 
     } catch (err) {
       console.error(err);

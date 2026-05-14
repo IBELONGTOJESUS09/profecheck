@@ -3,7 +3,80 @@
 @tailwind utilities;
 
 body {
-  @apply min-h-screen bg-brand-900 text-brand-50 antialiased;
+  @apply min-h-screen bg-brand-900;
+}
+
+/* Fondo CECyTE: capas con misma imagen, movimiento diagonal suave (arriba-izquierda) */
+@keyframes cecyte-drift-up-left {
+  0% {
+    transform: translate3d(3%, 3%, 0);
+  }
+  100% {
+    transform: translate3d(-3%, -3%, 0);
+  }
+}
+
+@keyframes cecyte-drift-up-left-slow {
+  0% {
+    transform: translate3d(2%, 2%, 0);
+  }
+  100% {
+    transform: translate3d(-2.5%, -2.5%, 0);
+  }
+}
+
+.cecyte-bg-overlay {
+  z-index: 3;
+  background: linear-gradient(
+    165deg,
+    rgb(66 20 36 / 0.82) 0%,
+    rgb(66 20 36 / 0.88) 45%,
+    rgb(30 10 18 / 0.9) 100%
+  );
+}
+
+.cecyte-bg-layer {
+  position: absolute;
+  left: -35%;
+  top: -35%;
+  width: 170%;
+  height: 170%;
+  z-index: 1;
+  background-image: url("/cecyte-bg.png");
+  background-repeat: repeat;
+  background-position: center top;
+  /* Mosaico: prioriza la marca superior y reduce la franja del pie del logo */
+  background-size: min(420px, 38vw) auto;
+  opacity: 0.14;
+  will-change: transform;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  animation: cecyte-drift-up-left 48s ease-in-out infinite alternate;
+}
+
+.cecyte-bg-layer--2 {
+  z-index: 2;
+  opacity: 0.1;
+  background-size: min(520px, 48vw) auto;
+  animation: cecyte-drift-up-left-slow 64s ease-in-out infinite alternate;
+  animation-delay: -8s;
+  filter: blur(0.5px);
+}
+
+.cecyte-bg-layer--3 {
+  z-index: 1;
+  opacity: 0.07;
+  background-size: min(300px, 28vw) auto;
+  animation: cecyte-drift-up-left 36s ease-in-out infinite alternate;
+  animation-delay: -18s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cecyte-bg-layer {
+    animation: none;
+  }
 }
 
 .card {

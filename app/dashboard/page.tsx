@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supaClient";
-import { clearSession, readSession } from "@/lib/sessions";
+import { clearSession, readGroup, readSession } from "@/lib/sessions";
 import { AsistenciaRow } from "@/lib/types";
 
 export default function DashboardPage() {
@@ -28,6 +28,11 @@ export default function DashboardPage() {
 
     if (!session) {
       router.push("/login");
+      return;
+    }
+
+    if (readGroup() !== "4DPGM") {
+      router.push("/group-select");
       return;
     }
 
