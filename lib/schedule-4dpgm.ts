@@ -207,34 +207,34 @@ export const SCHEDULE_ROWS: ScheduleRow[] = [
   }
 ];
 
-/** Colores de celda por tipo de materia (similar al horario impreso) */
+/** Colores de celda por tipo de materia — alto contraste para lectura rápida */
 export function subjectCellClasses(materia: string): string {
   const m = materia.toLowerCase();
   if (m.includes("cine club")) {
-    return "border-sky-300/80 bg-sky-100 text-slate-900";
+    return "border-2 border-sky-500 bg-sky-200 text-sky-950 shadow-sm";
   }
   if (m.includes("no relacionales")) {
-    return "border-emerald-400/70 bg-emerald-100 text-emerald-950";
+    return "border-2 border-emerald-600 bg-emerald-200 text-emerald-950 shadow-sm";
   }
   if (m.includes("relacionales")) {
-    return "border-orange-300/90 bg-orange-100 text-orange-950";
+    return "border-2 border-orange-500 bg-orange-200 text-orange-950 shadow-sm";
   }
   if (m.includes("matemáticas")) {
-    return "border-amber-400/90 bg-amber-100 text-amber-950";
+    return "border-2 border-amber-600 bg-amber-200 text-amber-950 shadow-sm";
   }
   if (m.includes("inglés")) {
-    return "border-amber-500/80 bg-amber-200 text-amber-950";
+    return "border-2 border-yellow-600 bg-yellow-200 text-yellow-950 shadow-sm";
   }
   if (m.includes("ciencias sociales")) {
-    return "border-sky-400/80 bg-sky-100 text-slate-900";
+    return "border-2 border-blue-500 bg-blue-200 text-blue-950 shadow-sm";
   }
   if (m.includes("reacciones químicas")) {
-    return "border-green-900/60 bg-green-800 text-green-50";
+    return "border-2 border-green-800 bg-green-700 text-white shadow-sm";
   }
   if (m.includes("conciencia histórica")) {
-    return "border-teal-400/80 bg-teal-100 text-teal-950";
+    return "border-2 border-teal-600 bg-teal-200 text-teal-950 shadow-sm";
   }
-  return "border-slate-300 bg-slate-100 text-slate-900";
+  return "border-2 border-slate-400 bg-slate-200 text-slate-900 shadow-sm";
 }
 
 export function estadoBadgeClasses(estado: AsistenciaEstado): string {
