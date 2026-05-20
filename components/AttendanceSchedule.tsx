@@ -5,6 +5,7 @@ import {
   DayKey,
   DAYS,
   estadoBadgeClasses,
+  getCurrentDayKey,
   PreparedRow,
   subjectCellClasses
 } from "@/lib/schedule-4dpgm";
@@ -14,7 +15,9 @@ type Props = {
 };
 
 export default function AttendanceSchedule({ rows }: Props) {
-  const [selectedDay, setSelectedDay] = useState<DayKey>("lunes");
+  const [selectedDay, setSelectedDay] = useState<DayKey>(
+    () => getCurrentDayKey() ?? "lunes"
+  );
   const selectedDayLabel =
     DAYS.find((d) => d.key === selectedDay)?.label ?? "Lunes";
 
@@ -52,9 +55,6 @@ export default function AttendanceSchedule({ rows }: Props) {
           </span>
           <span className="inline-flex items-center rounded-full bg-red-600 px-3 py-1.5 text-sm font-bold text-white shadow">
             Ausente
-          </span>
-          <span className="text-slate-600">
-            (Asignación aleatoria al cargar: 80% / 8% / 12%)
           </span>
         </div>
 
@@ -160,7 +160,8 @@ export default function AttendanceSchedule({ rows }: Props) {
 
       <p className="border-t-2 border-slate-200 bg-slate-50 px-4 py-3 text-center text-sm text-slate-600 sm:px-6">
         Mostrando materias de <span className="font-bold">{selectedDayLabel}</span>.
-        Los estados se generan al azar en cada carga de página.
+        Solo el día de hoy actualiza asistencia en tiempo real; los demás días se
+        muestran como Presente hasta su día.
       </p>
     </div>
   );

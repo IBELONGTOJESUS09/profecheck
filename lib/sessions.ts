@@ -26,6 +26,11 @@ export function readGroup(): ProfeCheckGroup | null {
   return (PROFECHECK_GROUPS as readonly string[]).includes(raw) ? (raw as ProfeCheckGroup) : null;
 }
 
+export function clearGroup() {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(GROUP_KEY);
+}
+
 export function clearSession() {
   if (typeof window === "undefined") return;
   localStorage.removeItem(SESSION_KEY);

@@ -3,8 +3,14 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import AttendanceSchedule from "@/components/AttendanceSchedule";
-import { buildScheduleWithEstados, PreparedRow } from "@/lib/schedule-4dpgm";
-import { clearSession, readGroup, readSession } from "@/lib/sessions";
+import OptionsMenu from "@/components/OptionsMenu";
+import {
+  buildScheduleWithEstados,
+  getCurrentDayKey,
+  PreparedRow,
+  refreshActiveDayEstados
+} from "@/lib/schedule-4dpgm";
+import { readGroup, readSession } from "@/lib/sessions";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -23,30 +29,28 @@ export default function DashboardPage() {
       return;
     }
 
-    setScheduleRows(buildScheduleWithEstados());
-  }, [router]);
+    const today = getCurrentDayKey();
+    setScheduleRows(buildScheduleWithEstados(today));
 
-  const handleLogout = () => {
-    clearSession();
-    router.push("/login");
-  };
+    if (!today) return;
+
+    const intervalId = window.setInterval(() => {
+      setScheduleRows((prev) =>
+        prev.length > 0 ? refreshActiveDayEstados(prev, today) : prev
+      );
+    }, 60_000);
+
+    return () => window.clearInterval(intervalId);
+  }, [router]);
 
   return (
     <section className="space-y-6 p-4 text-brand-50 sm:p-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white sm:text-3xl">ProfeCheck</h1>
-          <p className="mt-1 text-sm text-brand-100/90">
-            Asistencia semanal · 4° DPGM
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="rounded-xl bg-red-500 px-4 py-2 text-sm font-semibold text-white shadow-md"
-        >
-          Cerrar sesión
-        </button>
+      <OptionsMenu />
+      <div>
+        <h1 className="text-2xl font-bold text-white sm:text-3xl">ProfeCheck</h1>
+        <p className="mt-1 text-sm text-brand-100/90">
+          Asistencia semanal · 4° DPGM
+        </p>
       </div>
 
       {scheduleRows.length > 0 ? (

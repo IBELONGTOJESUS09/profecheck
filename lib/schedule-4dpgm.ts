@@ -260,14 +260,57 @@ export type PreparedLessonRow = {
 
 export type PreparedRow = PreparedLessonRow | RecesoRow;
 
-export function buildScheduleWithEstados(): PreparedRow[] {
+const WEEKDAY_TO_DAY: Record<string, DayKey> = {
+  monday: "lunes",
+  tuesday: "martes",
+  wednesday: "miercoles",
+  thursday: "jueves",
+  friday: "viernes"
+};
+
+/** Día escolar actual (lun–vie) en hora de México; null en fin de semana */
+export function getCurrentDayKey(): DayKey | null {
+  const weekday = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    timeZone: "America/Mexico_City"
+  })
+    .format(new Date())
+    .toLowerCase();
+
+  return WEEKDAY_TO_DAY[weekday] ?? null;
+}
+
+export function buildScheduleWithEstados(
+  activeDay: DayKey | null = getCurrentDayKey()
+): PreparedRow[] {
   return SCHEDULE_ROWS.map((row) => {
     if (row.kind === "receso") return row;
     const byDay = {} as Record<DayKey, CellWithEstado>;
     for (const d of DAYS) {
       const c = row.byDay[d.key];
-      byDay[d.key] = { ...c, estado: rollEstado() };
+      const estado =
+        activeDay && d.key === activeDay ? rollEstado() : "Presente";
+      byDay[d.key] = { ...c, estado };
     }
     return { kind: "lesson", horario: row.horario, byDay };
+  });
+}
+
+/** Actualiza solo las materias del día activo (tiempo real) */
+export function refreshActiveDayEstados(
+  rows: PreparedRow[],
+  activeDay: DayKey
+): PreparedRow[] {
+  return rows.map((row) => {
+    if (row.kind === "receso") return row;
+    const cell = row.byDay[activeDay];
+    return {
+      kind: "lesson",
+      horario: row.horario,
+      byDay: {
+        ...row.byDay,
+        [activeDay]: { ...cell, estado: rollEstado() }
+      }
+    };
   });
 }
