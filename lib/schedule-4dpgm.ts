@@ -18,10 +18,20 @@ export function rollEstado(): AsistenciaEstado {
   return "Ausente";
 }
 
+export const MATERIA_REACCIONES_QUIMICAS = "Reacciones Quimicas";
+
 export type LessonCell = {
   materia: string;
   maestro: string;
 };
+
+/** Etiqueta visible en la tabla (evita celdas vacías) */
+export function getMateriaLabel(cell: LessonCell): string {
+  const trimmed = cell.materia?.trim();
+  if (trimmed) return trimmed;
+  if (cell.maestro?.includes("Zapata")) return MATERIA_REACCIONES_QUIMICAS;
+  return "";
+}
 
 export type LessonRow = {
   kind: "lesson";
@@ -146,7 +156,7 @@ export const SCHEDULE_ROWS: ScheduleRow[] = [
         maestro: "Pazos López Jorge Adán"
       },
       miercoles: {
-        materia: "Reacciones químicas: conservación de la materia en la formación de nuevas sustancias",
+        materia: "Reacciones Quimicas",
         maestro: "Zapata Céspedes Karina del Carmen"
       },
       jueves: {
@@ -154,7 +164,7 @@ export const SCHEDULE_ROWS: ScheduleRow[] = [
         maestro: "Martínez Cervantes Gerardo"
       },
       viernes: {
-        materia: "Reacciones químicas: conservación de la materia en la formación de nuevas sustancias",
+        materia: "Reacciones Quimicas",
         maestro: "Zapata Céspedes Karina del Carmen"
       }
     }
@@ -164,11 +174,11 @@ export const SCHEDULE_ROWS: ScheduleRow[] = [
     horario: "18:10 – 19:00",
     byDay: {
       lunes: {
-        materia: "Reacciones químicas: conservación de la materia en la formación de nuevas sustancias",
+        materia: "Reacciones Quimicas",
         maestro: "Zapata Céspedes Karina del Carmen"
       },
       martes: {
-        materia: "Reacciones químicas: conservación de la materia en la formación de nuevas sustancias",
+        materia: "Reacciones Quimicas",
         maestro: "Zapata Céspedes Karina del Carmen"
       },
       miercoles: {
@@ -193,16 +203,16 @@ export const SCHEDULE_ROWS: ScheduleRow[] = [
         materia: "Implementa bases de datos relacionales en un sistema de información",
         maestro: "Leyva Montoya Gerardo"
       },
-      martes: { materia: "Cine club", maestro: "—" },
+      martes: { materia: "CINE CLUB", maestro: "—" },
       miercoles: {
         materia: "Conciencia histórica I. Perspectivas del México antiguo en los contextos globales",
         maestro: "Herrera Cázarez Minerva"
       },
       jueves: {
-        materia: "Implementa bases de datos relacionales en un sistema de información",
-        maestro: "Leyva Montoya Gerardo"
+        materia: "Implementa bases de datos no relacionales en un sistema de información",
+        maestro: "Martínez Cervantes Gerardo"
       },
-      viernes: { materia: "Cine club", maestro: "—" }
+      viernes: { materia: "CINE CLUB", maestro: "—" }
     }
   }
 ];
@@ -228,8 +238,8 @@ export function subjectCellClasses(materia: string): string {
   if (m.includes("ciencias sociales")) {
     return "border-2 border-blue-500 bg-blue-200 text-blue-950 shadow-sm";
   }
-  if (m.includes("reacciones químicas")) {
-    return "border-2 border-green-800 bg-green-700 text-white shadow-sm";
+  if (m.includes("reacciones quimicas") || m.includes("reacciones químicas")) {
+    return "border-2 border-green-700 bg-green-200 text-green-950 shadow-sm";
   }
   if (m.includes("conciencia histórica")) {
     return "border-2 border-teal-600 bg-teal-200 text-teal-950 shadow-sm";
@@ -290,7 +300,11 @@ export function buildScheduleWithEstados(
       const c = row.byDay[d.key];
       const estado =
         activeDay && d.key === activeDay ? rollEstado() : "Presente";
-      byDay[d.key] = { ...c, estado };
+      byDay[d.key] = {
+        ...c,
+        materia: getMateriaLabel(c),
+        estado
+      };
     }
     return { kind: "lesson", horario: row.horario, byDay };
   });
@@ -301,15 +315,25 @@ export function refreshActiveDayEstados(
   rows: PreparedRow[],
   activeDay: DayKey
 ): PreparedRow[] {
-  return rows.map((row) => {
+  return rows.map((row, rowIndex) => {
     if (row.kind === "receso") return row;
-    const cell = row.byDay[activeDay];
+    let cell = row.byDay[activeDay];
+    if (!cell?.materia?.trim()) {
+      const source = SCHEDULE_ROWS[rowIndex];
+      if (source.kind === "lesson") {
+        cell = source.byDay[activeDay];
+      }
+    }
     return {
       kind: "lesson",
       horario: row.horario,
       byDay: {
         ...row.byDay,
-        [activeDay]: { ...cell, estado: rollEstado() }
+        [activeDay]: {
+          ...cell,
+          materia: getMateriaLabel(cell),
+          estado: rollEstado()
+        }
       }
     };
   });

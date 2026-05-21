@@ -6,6 +6,7 @@ import {
   DAYS,
   estadoBadgeClasses,
   getCurrentDayKey,
+  getMateriaLabel,
   PreparedRow,
   subjectCellClasses
 } from "@/lib/schedule-4dpgm";
@@ -126,19 +127,13 @@ export default function AttendanceSchedule({ rows }: Props) {
                   </td>
                   {(() => {
                     const cell = row.byDay[selectedDay];
-                    const palette = subjectCellClasses(cell.materia);
-                    const isQuimica = cell.materia
-                      .toLowerCase()
-                      .includes("reacciones químicas");
+                    const materia = getMateriaLabel(cell);
+                    const palette = subjectCellClasses(materia);
                     return (
                       <td className={`rounded-lg p-3 sm:p-4 ${palette}`}>
                         <div className="flex min-h-[4.5rem] flex-col justify-between gap-3">
-                          <p
-                            className={`text-sm font-bold leading-snug sm:text-[15px] sm:leading-snug ${
-                              isQuimica ? "text-white" : ""
-                            }`}
-                          >
-                            {cell.materia}
+                          <p className="text-sm font-bold leading-snug sm:text-[15px] sm:leading-snug">
+                            {materia}
                           </p>
                           <div className="flex justify-center">
                             <span
