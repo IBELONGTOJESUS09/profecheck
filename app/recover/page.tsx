@@ -67,10 +67,10 @@ export default function RecoverPage() {
     <section className="flex min-h-[80vh] items-center justify-center">
       <form className="card space-y-4" onSubmit={onStart}>
         <h1 className="text-3xl font-bold text-brand-800">Recuperar contrasena</h1>
-        <p className="text-sm text-slate-500">Usa correo o telefono para restablecer acceso.</p>
+        <p className="text-sm text-slate-500">Usa matrícula o teléfono para restablecer acceso.</p>
 
         <label className="block text-sm font-medium">
-          Correo o telefono
+          Matrícula o teléfono
           <input className="input" value={target} onChange={(e) => setTarget(e.target.value)} required />
         </label>
 

@@ -17,15 +17,13 @@ export default function DashboardPage() {
   const [scheduleRows, setScheduleRows] = useState<PreparedRow[]>([]);
 
   useEffect(() => {
-    const session = readSession();
-
-    if (!session) {
-      router.push("/login");
+    if (!readSession()) {
+      router.replace("/login");
       return;
     }
 
     if (readGroup() !== "4DPGM") {
-      router.push("/group-select");
+      router.replace("/group-select");
       return;
     }
 
@@ -47,9 +45,9 @@ export default function DashboardPage() {
     <section className="space-y-6 p-4 text-brand-50 sm:p-6">
       <OptionsMenu />
       <div>
-        <h1 className="text-2xl font-bold text-white sm:text-3xl">ProfeCheck</h1>
+        <h1 className="text-2xl font-bold text-white sm:text-3xl">Horario / Asistencia</h1>
         <p className="mt-1 text-sm text-brand-100/90">
-          Asistencia semanal · 4° DPGM
+          Horario del grupo y control de asistencia · 4° DPGM
         </p>
       </div>
 

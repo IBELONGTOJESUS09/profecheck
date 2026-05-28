@@ -8,6 +8,10 @@ import { saveSession } from "@/lib/sessions";
 import { limitPhoneDigits, normalizeInput } from "@/lib/validators";
 import { UserRow } from "@/lib/types";
 
+function limitMatriculaDigits(value: string) {
+  return value.replace(/\D/g, "").slice(0, 14);
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [identificador, setIdentificador] = useState("");
@@ -21,24 +25,13 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const input = normalizeInput(identificador);
-      const telefono = limitPhoneDigits(input);
-      const looksLikePhone = telefono.length >= 7;
-
-      // 🔍 BUSCAR USUARIO (ARREGLADO)
-      let query = supabase.from("users").select("*");
-
-      if (looksLikePhone) {
-        query = query.or(
-          `telefono.ilike.%${telefono}%,email.ilike.%${input}%,nombre.ilike.%${input}%`
-        );
-      } else {
-        query = query.or(
-          `email.ilike.%${input}%,nombre.ilike.%${input}%`
-        );
-      }
-
-      const { data, error: queryError } = await query.limit(1).maybeSingle();
+      const matricula = limitMatriculaDigits(normalizeInput(identificador));
+      const { data, error: queryError } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", matricula)
+        .limit(1)
+        .maybeSingle();
 
       // ❌ Usuario no existe
       if (queryError || !data) {
@@ -56,7 +49,7 @@ export default function LoginPage() {
 
       // ✅ LOGIN CORRECTO
       saveSession(data.id);
-      router.push("/group-select");
+      router.push("/dashboard/section-3");
 
     } catch (err) {
       console.error(err);
@@ -71,16 +64,19 @@ export default function LoginPage() {
       <form className="card space-y-4" onSubmit={onSubmit}>
         <h1 className="text-3xl font-bold text-brand-800">ProfeCheck</h1>
         <p className="text-sm text-slate-500">
-          Inicia sesión con nombre, correo o teléfono.
+          Inicia sesión con tu matrícula.
         </p>
 
         <label className="block text-sm font-medium">
-          Nombre, correo o teléfono
+          Matrícula
           <input
             className="input"
             value={identificador}
-            onChange={(e) => setIdentificador(e.target.value)}
-            placeholder="usuario@correo.com o +52..."
+            onChange={(e) => setIdentificador(limitMatriculaDigits(e.target.value))}
+            placeholder="123456"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={14}
             required
           />
         </label>

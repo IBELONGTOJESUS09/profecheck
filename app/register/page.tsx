@@ -6,6 +6,10 @@ import { FormEvent, useState } from "react";
 import { supabase } from "@/lib/supaClient";
 import { limitPhoneDigits, normalizeInput } from "@/lib/validators";
 
+function limitMatriculaDigits(value: string) {
+  return value.replace(/\D/g, "").slice(0, 14);
+}
+
 export default function RegisterPage() {
   const router = useRouter();
 
@@ -27,7 +31,7 @@ export default function RegisterPage() {
     }
 
     const tel = limitPhoneDigits(telefono);
-    const cleanEmail = email ? normalizeInput(email) : null;
+    const cleanEmail = email ? limitMatriculaDigits(normalizeInput(email)) : null;
     const fullPhone = tel ? `${prefijo}${tel}` : null;
 
     let existing: any = null;
@@ -64,7 +68,7 @@ export default function RegisterPage() {
     }
 
     if (existing) {
-      setError("Ya existe una cuenta con ese correo o telefono.");
+      setError("Ya existe una cuenta con esa matrícula o teléfono.");
       return;
     }
 
@@ -103,12 +107,15 @@ export default function RegisterPage() {
         </label>
 
         <label className="block text-sm font-medium">
-          Correo electronico
+          Matrícula
           <input
             className="input"
-            type="email"
+            type="text"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(limitMatriculaDigits(e.target.value))}
+            inputMode="numeric"
+            pattern="[0-9]*"
+            maxLength={14}
           />
         </label>
 
