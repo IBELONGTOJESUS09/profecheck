@@ -321,7 +321,12 @@ export function refreshActiveDayEstados(
     if (!cell?.materia?.trim()) {
       const source = SCHEDULE_ROWS[rowIndex];
       if (source.kind === "lesson") {
-        cell = source.byDay[activeDay];
+        const sourceCell = source.byDay[activeDay];
+    
+        cell = {
+          ...sourceCell,
+          estado: "Presente"
+        };
       }
     }
     return {
